@@ -155,3 +155,14 @@ def clean_dataset(df:pd.DataFrame):
     # индексы без nan, inf и -inf
     indices_to_keep = ~df.isin([np.nan, np.inf, -np.inf]).any(axis=1)
     return df[indices_to_keep].astype(np.float64)
+
+def df_for_mpf(df: pd.DataFrame, raw_df: pd.DataFrame, columns:list):
+  '''
+  Добавление колонок Open, High, Low, Close из raw_df
+  необходимых для отображения в mpf.plot()
+  если удалили для тренировачного набора
+  '''
+  copy = df.copy()
+  for col in columns:
+    copy = copy.join(raw_df[col])
+  return copy
