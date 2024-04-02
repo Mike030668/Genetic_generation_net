@@ -10,6 +10,7 @@ import gc                        # очиска памяти
 @timeoutable(default = MESSAGE_2) # Декоратор для контроля времени
 def evaluate_model(model,
                    y_scaler,
+                   make_log: bool,
                    x_val: list,
                    y_val: list,
                    train_gen,
@@ -62,7 +63,7 @@ def evaluate_model(model,
 
       # Прогнозируем данные текущей сетью
       #(pred_val, y_val_true) = get_scalepred(model, XVAL, YVAL, y_scaler)
-      (pred_val, y_val_true) = get_scalepred(model, x_val, y_val, y_scaler)
+      (pred_val, y_val_true) = get_scalepred(model, x_val, y_val, y_scaler, make_log)
 
       # Возвращаем автокорреляцию
       corr, own_corr = auto_corr(pred_lags = channels,
