@@ -1,6 +1,6 @@
 import numpy as np # библиотека нампи
 import random as random # Импортируем модель randim
-import tensorflow as tf           # библиотека машинного обучения
+import tensorflow as tf         # библиотека машинного обучения
 import inspect # для получения имен аргументов функции
 
 # Класс для определения слое
