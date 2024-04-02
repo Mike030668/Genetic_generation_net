@@ -11,7 +11,7 @@ from genetic.utils import show_pocess, show_process, saver
 from block_net.bricks import Set_net, Make_blocks
 from block_net.constructor import WildregressModel
 from block_net.constant import  TIMELIMIT_1, TIMELIMIT_2
-from block_net.estimate import  evaluate_model
+from block_net.estimate.estimator import  evaluate_model
 
 def selection( 
         directory: str, # куда  пишет данные этот код
