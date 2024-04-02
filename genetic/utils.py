@@ -4,7 +4,7 @@ import gc                        # очиска памяти
 
 # Вспомогательные функции
 
-def show_pocess_1(avlmdl_lst: list, gdmdl_lst: list,
+def show_pocess(avlmdl_lst: list, gdmdl_lst: list,
                   sval_lst: list, seff_lst: list):
     '''
     Функция отображает процесс создания моделей и
@@ -37,7 +37,7 @@ def show_pocess_1(avlmdl_lst: list, gdmdl_lst: list,
 
 
 
-def show_process_2(svalp_lst:list, seffp_lst:list, ephtime_lst:list):
+def show_process(svalp_lst:list, seffp_lst:list, ephtime_lst:list):
     '''
     Функция динамику поиска лучшей модели от эпохи
     Args:
