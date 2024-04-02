@@ -1,7 +1,7 @@
 from stopit import threading_timeoutable as timeoutable
 from block_net.constant import  MESSAGE_2
 from block_net.callbacks import  TimeHistory, GarbageCollectorCallback
-from block_net.estimate import get_scalepred, auto_corr
+from block_net.estimate.utils import get_scalepred, auto_corr
 import tensorflow as tf           # библиотека машинного обучения
 import numpy as np # библиотека нампи
 import gc                        # очиска памяти
