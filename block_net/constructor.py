@@ -1,5 +1,6 @@
 from stopit import threading_timeoutable as timeoutable
 import random as random # Импортируем модель randim
+import numpy as np              # библиотека нампи
 import tensorflow as tf           # библиотека машинного обучения
 from block_net.constant import MAX_HIDDEN, MESSAGE_1
 # Класс сборки нейронки
@@ -90,8 +91,7 @@ class WildregressModel():
               ########## создание гена для ярусности и  сложности сети ########
               if not bot_pop[9]:
                   # определяем ярусность сети
-                  bot_pop[8] = random.choice(np.arange(2,
-                                                       len(new_setblockov)-1))
+                  bot_pop[8] = random.choice(np.arange(2, len(new_setblockov)-1))
                    # отбор блоков в ярусы
                   bot_pop[9] = [0] + [len(new_setblockov)] \
                                    + sorted(np.random.choice(np.arange(1,
