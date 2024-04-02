@@ -313,7 +313,7 @@ def selection(
                         print(discription + ' - не подошла под задачу')
                         ntk_mdl+=1
                         f = 800
-                        lrn = 800
+                        tlrn = 800
 
                 except Exception:
                         # если не создалась то пишем плохую точность
