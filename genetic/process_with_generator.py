@@ -289,6 +289,8 @@ def selection(
 
                                 # выводим результат оценки
                                 print("result ", result)
+                                print()
+                                time.sleep(1)
                                 # если превысили время, то gen_model - просто сообщение
                                 if len(result) > 2:
                                     print(result)
