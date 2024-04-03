@@ -1,4 +1,4 @@
-#from stopit import threading_timeoutable as timeoutable
+from stopit import threading_timeoutable as timeoutable
 from block_net.constant import  MESSAGE_2
 from block_net.callbacks import  TimeHistory, GarbageCollectorCallback
 from block_net.estimate.utils import get_scalepred, auto_corr
@@ -7,33 +7,38 @@ import numpy as np # библиотека нампи
 import gc                        # очиска памяти
 
 # Функция на оценки с добавленным колбеком времени
-#@timeoutable(default = MESSAGE_2) # Декоратор для контроля времени
+@timeoutable(default = MESSAGE_2) # Декоратор для контроля времени
 def evaluate_model(model,
                    y_scaler,
                    make_log: bool,
                    x_val: list,
                    y_val: list,
-                   train_gen,
-                   val_gen,
+                   type_data : str,
+                   train_data,
+                   val_data,
                    ep,
                    verb,
                    optimizer,
                    loss,
                    channels,
-                   predict_lag):
+                   predict_lag:int,
+                   check_aotocorr = True
+                   ):
       '''
       Функция оценки модели на точность и автокорреляцию, с обучение
       и проверкой эффекта автокорреляции
       model       - тестируемая модель
       y_scaler    - ранее обученный скэйлер для ответов
-      train_gen   - генератор данных для обучения модели
-      val_gen     - генератор данных для проверки модели
+      type_data   - "generator" или "numpy"
+      type_data   - генератор, или нампи массим (x,y) данных для обучения модели
+      val_data    - генератор, или нампи массим (x,y) данных для проверки модели
       ep          - количество эпох оценосного обучения
       verb        - показывать ли процесс обучения
       optimizer   - используемый оптимайзер для обучения
       loss        - используемая функция потерь для обучения
       channels    - каналы в ответе модели для проверки автокорреляции
       predict_lag - на сколько шагом предсказание
+      check_aotocorr - проверять автокорреляцию
       '''
       # сбрасываем оценку на случай пересечения названия с global переменной
       val = 0
@@ -50,12 +55,26 @@ def evaluate_model(model,
                                                       patience = 1,
                                                       min_lr = 1e-9,
                                                       verbose = 1)
-      # обучаем модель
-      history = model.fit(train_gen,
-                          epochs=ep,
-                          verbose=verb,
-                          validation_data=val_gen,
-                          callbacks=[time_callback, clear_ozu, reduce_lr])
+      if type_data == "generator":
+        # обучаем модель
+        history = model.fit(train_data,
+                            epochs=ep,
+                            verbose=verb,
+                            validation_data=val_data,
+                            callbacks=[time_callback, clear_ozu, reduce_lr])
+        
+      elif type_data == "numpy":
+        # обучаем модель
+        history = model.fit(train_data[0],
+                            train_data[1],
+                            epochs=ep,
+                            verbose=verb,
+                            validation_data=val_data,
+                            callbacks=[time_callback, clear_ozu, reduce_lr])
+        
+      else:
+         print("type_data can be 'generator' or 'numpy'")
+
       # получаем данные по времени каждой эпохи
       times_back = time_callback.times
       # берем среднее время эпохи
@@ -74,7 +93,9 @@ def evaluate_model(model,
                                  return_data = True)
       
       # Считаем MAE автокорреляции и умножаем (прибавляем) ошибку обучения
-      val = 100*tf.keras.losses.MAE(corr, own_corr).numpy()*history.history["val_loss"][-1]
+      val = history.history["val_loss"][-1]
+      if check_aotocorr:
+         val+= tf.keras.losses.MAE(corr, own_corr).numpy()
 
       # чистим память
       tf.keras.backend.clear_session()

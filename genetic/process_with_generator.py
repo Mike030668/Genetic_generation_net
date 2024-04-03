@@ -5,6 +5,8 @@ import numpy as np              # библиотека нампи
 from tqdm.notebook import tqdm   # отрисовка прохождения цикла
 import tensorflow as tf           # библиотека машинного обучения
 from IPython.display import clear_output # очистка вывода в ячейке
+import warnings # библиотека сообщений по ошибкам
+warnings.filterwarnings("ignore") # игнорировать сообщения ошибок
 
 from genetic.sowing import posev_net, get_idxbest, get_bestnets
 from genetic.utils import show_pocess, show_process, saver
@@ -20,9 +22,13 @@ def selection(
         frbest: int,
         inshape: tuple,
         predit_lag: int, 
-        train_datagen: object,   # генератор данных для обучения
-        val_datagen: object,
-        y_scaler: object, #Y_SCAILER,        # обученный скейлер для y
+        make_log: bool,
+        x_val: list,
+        y_val: list,
+        type_data : str,
+        train_data: object,       # генератор данных для обучения
+        val_data: object,
+        y_scaler: object,         # Y_SCAILER,        # обученный скейлер для y
         activ_lays: list,
         neiro_out: int,
         activ_out: str,
@@ -32,17 +38,19 @@ def selection(
         verbouse: int,
         epohs: int,
         test_eph: int,
-        n: int,  # = 5 # количество ботов популяции
-        p: int, #  = 6  # количество популяций
-        dn: float, #= 0.3 # доля выживших ботов
-        dp: float, # = 0.3 # доля выживших популяций
-        dneff: float, # = 0.1 # доля выживших ботов по эффективности
-        dpeff: float, # = 0.1 # доля выживших популяций по эффективности
-        prb_randbot: float, # = 0.3 # вероятность появления случайного бота в новой популяции
-        mutp: float, # = 0.4   # Коэфициент мутаций при создании мегабота новой популяции
-        mutn: float, # = 0.45  # Коэфициент мутаций при создании бота новой сети в популяции
-        dpsurv: float, # = 0.8 # доля от выживших ботов популяции используемыех в родителях
-        dnsurv: float, # = 0.8 # доля от выживших ботов мегапопуляции используемыех в родителях
+        optimizer:object,
+        loss:object,
+        n: int,                   # = 5 # количество ботов популяции
+        p: int,                   #  = 6  # количество популяций
+        dn: float,                # = 0.3 # доля выживших ботов
+        dp: float,                # = 0.3 # доля выживших популяций
+        dneff: float,             # = 0.1 # доля выживших ботов по эффективности
+        dpeff: float,             # = 0.1 # доля выживших популяций по эффективности
+        prb_randbot: float,       # = 0.3 # вероятность появления случайного бота в новой популяции
+        mutp: float,              # = 0.4   # Коэфициент мутаций при создании мегабота новой популяции
+        mutn: float,              # = 0.45  # Коэфициент мутаций при создании бота новой сети в популяции
+        dpsurv: float,            # = 0.8 # доля от выживших ботов популяции используемыех в родителях
+        dnsurv: float,            # = 0.8 # доля от выживших ботов мегапопуляции используемыех в родителях
         posev = []
 ):
         """
@@ -263,22 +271,26 @@ def selection(
                             avl_mdl+=1
 
                         # Вычисляем точность текущего бота
-                        #try:
-                        if testing:
+                        try:
+                        #if testing:
                             if testing:
                                 # оптимизатор
-                                optimizer = tf.keras.optimizers.Adam(learning_rate=1e-3)
+                                #optimizer = tf.keras.optimizers.Adam(learning_rate=1e-3)
                                 # функция потерь
-                                loss = tf.keras.losses.MSE
+                                #loss = tf.keras.losses.MSE
                                 # оценка по времени и смешанной точности нашей модели
                                 result = evaluate_model(
                                                         # парамметр от декоратора
-                                                        #timeout =  TIMELIMIT_2,  # время в сек отводимое на оценку
+                                                        timeout =  TIMELIMIT_2,  # время в сек отводимое на оценку
                                                         # собственные парамметры функции
                                                         model = gen_model,           # тестируемая модель
-                                                        y_scaler = y_scaler, #Y_SCAILER,        # обученный скейлер для y
-                                                        train_gen = train_datagen,   # генератор данных для обучения
-                                                        val_gen = val_datagen,       # генератор данных для проверки
+                                                        y_scaler = y_scaler,          # обученный скейлер для y
+                                                        make_log = make_log,
+                                                        x_val = x_val,
+                                                        y_val = y_val,
+                                                        type_data = type_data,
+                                                        train_data = train_data,   # генератор данных для обучения
+                                                        val_data = val_data,       # генератор данных для проверки
                                                         ep = test_eph,               # эпох обучения
                                                         verb = verbouse,             # отображать ли обучение
                                                         optimizer = optimizer,       # оптимизатор
@@ -315,8 +327,8 @@ def selection(
                                 f = 600
                                 tlrn = 600
 
-                        #except Exception:
-                        else:        
+                        except Exception:
+                        #else:        
                         # если не создалась то пишем плохую точность
                             print(discription + ' - не подошла под задачу')
                             ntk_mdl+=1
