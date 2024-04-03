@@ -271,78 +271,77 @@ def selection(
                             testing = True
                             avl_mdl+=1
 
-                        # Вычисляем точность текущего бота
-                        try:
-                        #if testing:
-                            if testing:
-                                # оптимизатор
-                                #optimizer = tf.keras.optimizers.Adam(learning_rate=1e-3)
-                                # функция потерь
-                                #loss = tf.keras.losses.MSE
-                                # оценка по времени и смешанной точности нашей модели
-                                result = evaluate_model(
-                                                        # парамметр от декоратора
-                                                        timeout =  TIMELIMIT_2,            # время в сек отводимое на оценку
-                                                        # собственные парамметры функции
-                                                        model = gen_model,                 # тестируемая модель
-                                                        y_scaler = y_scaler,               # обученный скейлер для y
-                                                        make_log = make_log,
-                                                        x_val = x_val,
-                                                        y_val = y_val,
-                                                        type_data = type_data,
-                                                        train_data = train_data,           # генератор данных для обучения
-                                                        val_data = val_data,               # генератор данных для проверки
-                                                        ep = test_eph,                     # эпох обучения
-                                                        verb = verbouse,                   # отображать ли обучение
-                                                        optimizer = optimizer,             # оптимизатор
-                                                        loss = loss,                       # функция потерь
-                                                        channels = np.arange(predit_lag),  # P REDICT_LAG),# Отображение сводки модели
-                                                        predict_lag = predit_lag ,         #    PREDICT_LAG    # На сколько шагов предсказание
-                                                        check_aotocorr = check_aotocorr
-                                                        )
-
-                                # выводим результат оценки
-                                print("result ", result)
-                                print()
-                                time.sleep(1)
-                                # если превысили время, то gen_model - просто сообщение
-                                if len(result) > 2:
-                                    print(result)
-                                    ntk_mdl+=1
-                                    f = 300
-                                    tlrn = 300
-
-                                else: # значит модель протестировалась
-                                    f = result[0]
-                                    tlrn = result[1]
-                                    print(discription + ' - подошла под задачу')
-                                    gd_mdl+=1
-
-                                # удаляем модель
-                                del(gen_model)
-                                # чистим память
-                                gc.collect()
-
-                            else:
-                                print(discription + ' - слишком долго создавалась')
-                                ntk_mdl+=1
-                                f = 600
-                                tlrn = 600
-
-                        except Exception:
-                        #else:        
-                        # если не создалась то пишем плохую точность
-                            print(discription + ' - не подошла под задачу')
-                            ntk_mdl+=1
-                            f = 800
-                            tlrn = 800
-
                     except Exception:
                         # если не создалась то пишем плохую точность
                         print(discription + ' - не создалась')
                         non_mdl+=1
                         f = 1000
                         tlrn = 1000
+
+                    # Вычисляем точность текущего бота
+                    try:
+                    #if testing:
+                        if testing:
+                            # оптимизатор
+                            #optimizer = tf.keras.optimizers.Adam(learning_rate=1e-3)
+                            # функция потерь
+                            #loss = tf.keras.losses.MSE
+                            # оценка по времени и смешанной точности нашей модели
+                            result = evaluate_model(
+                                                    # парамметр от декоратора
+                                                    timeout =  TIMELIMIT_2,            # время в сек отводимое на оценку
+                                                    # собственные парамметры функции
+                                                    model = gen_model,                 # тестируемая модель
+                                                    y_scaler = y_scaler,               # обученный скейлер для y
+                                                    make_log = make_log,
+                                                    x_val = x_val,
+                                                    y_val = y_val,
+                                                    type_data = type_data,
+                                                    train_data = train_data,           # генератор данных для обучения
+                                                    val_data = val_data,               # генератор данных для проверки
+                                                    ep = test_eph,                     # эпох обучения
+                                                    verb = verbouse,                   # отображать ли обучение
+                                                    optimizer = optimizer,             # оптимизатор
+                                                    loss = loss,                       # функция потерь
+                                                    channels = np.arange(predit_lag),  # P REDICT_LAG),# Отображение сводки модели
+                                                    predict_lag = predit_lag ,         #    PREDICT_LAG    # На сколько шагов предсказание
+                                                    check_aotocorr = check_aotocorr
+                                                    )
+
+                            # выводим результат оценки
+                            # если превысили время, то gen_model - просто сообщение
+                            if len(result) > 2:
+                                print(result)
+                                ntk_mdl+=1
+                                f = 300
+                                tlrn = 300
+
+                            else: # значит модель протестировалась
+                                f = result[0]
+                                tlrn = result[1]
+                                print(discription + ' - подошла под задачу')
+                                gd_mdl+=1
+
+                            # удаляем модель
+                            del(gen_model)
+                            # чистим память
+                            gc.collect()
+
+                        else:
+                            print(discription + ' - слишком долго создавалась')
+                            ntk_mdl+=1
+                            f = 600
+                            tlrn = 600
+
+                    except Exception:
+                    #else:        
+                    # если не создалась то пишем плохую точность
+                        print(discription + ' - не подошла под задачу')
+                        ntk_mdl+=1
+                        f = 800
+                        tlrn = 800
+
+
                     if f in (600, 800, 1000): print('Модель отбракована')
                     elif f == 300: print('Модель долго учится')
                     else:
