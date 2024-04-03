@@ -64,7 +64,7 @@ def show_process(svalp_lst:list, seffp_lst:list, ephtime_lst:list):
     print()
 
 
-def get_var_name(variable, globals_dict):
+def get_var_name(variable, globals_dict: str):
     '''
     Функция получения имени переменной в виде строки
     на основе глобальной видимости
@@ -77,7 +77,7 @@ def get_var_name(variable, globals_dict):
                   ][0]
     return var_name
 
-def saver(lists_datas: list, directory: str):
+def saver(lists_datas: list, directory: str, globals_dict: str):
     '''
     Функция сохраняет список с именем переменной
     в списке на основы функции, выдающей имя переменной
@@ -87,7 +87,7 @@ def saver(lists_datas: list, directory: str):
       directory - директория, куда пишем
     '''
     for data in lists_datas:
-        name = get_var_name(data)
+        name = get_var_name(data, globals_dict)
         np.save(directory + name + '.npy', np.array(data, dtype=object))
         # удаляем модель
     del(lists_datas)
