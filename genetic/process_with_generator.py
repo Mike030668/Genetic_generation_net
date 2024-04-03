@@ -51,7 +51,8 @@ def selection(
         mutn: float,              # = 0.45  # Коэфициент мутаций при создании бота новой сети в популяции
         dpsurv: float,            # = 0.8 # доля от выживших ботов популяции используемыех в родителях
         dnsurv: float,            # = 0.8 # доля от выживших ботов мегапопуляции используемыех в родителях
-        posev = []
+        posev = [],
+        check_aotocorr = True
 ):
         """
          directory -  куда  пишет данные этот код
@@ -281,22 +282,23 @@ def selection(
                                 # оценка по времени и смешанной точности нашей модели
                                 result = evaluate_model(
                                                         # парамметр от декоратора
-                                                        timeout =  TIMELIMIT_2,  # время в сек отводимое на оценку
+                                                        timeout =  TIMELIMIT_2,            # время в сек отводимое на оценку
                                                         # собственные парамметры функции
-                                                        model = gen_model,           # тестируемая модель
-                                                        y_scaler = y_scaler,          # обученный скейлер для y
+                                                        model = gen_model,                 # тестируемая модель
+                                                        y_scaler = y_scaler,               # обученный скейлер для y
                                                         make_log = make_log,
                                                         x_val = x_val,
                                                         y_val = y_val,
                                                         type_data = type_data,
-                                                        train_data = train_data,   # генератор данных для обучения
-                                                        val_data = val_data,       # генератор данных для проверки
-                                                        ep = test_eph,               # эпох обучения
-                                                        verb = verbouse,             # отображать ли обучение
-                                                        optimizer = optimizer,       # оптимизатор
-                                                        loss = loss,                 # функция потерь
-                                                        channels = np.arange(predit_lag),  #PREDICT_LAG),# Отображение сводки модели
-                                                        predict_lag = predit_lag #    PREDICT_LAG    # На сколько шагов предсказание
+                                                        train_data = train_data,           # генератор данных для обучения
+                                                        val_data = val_data,               # генератор данных для проверки
+                                                        ep = test_eph,                     # эпох обучения
+                                                        verb = verbouse,                   # отображать ли обучение
+                                                        optimizer = optimizer,             # оптимизатор
+                                                        loss = loss,                       # функция потерь
+                                                        channels = np.arange(predit_lag),  # P REDICT_LAG),# Отображение сводки модели
+                                                        predict_lag = predit_lag ,         #    PREDICT_LAG    # На сколько шагов предсказание
+                                                        check_aotocorr = check_aotocorr
                                                         )
 
                                 # выводим результат оценки
