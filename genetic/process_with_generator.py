@@ -126,7 +126,7 @@ def selection(
         nsurv_eff = max(1,round(dneff * n)) # Коли-во выживших ботов поп-ии по эффект.
         psurv_eff = max(1,round(dpeff * p)) # Кол-во выживших ботов мегапоп по эффект.
 
-        nnew = max(0, n - nsurv - nsurv_eff)  # Кол-во новых ботов
+        #nnew = max(0, n - nsurv - nsurv_eff)  # Кол-во новых ботов
         pnew = max(0, p - psurv - psurv_eff)  # Кол-во новых популяций
 
         parents_n = round(nsurv*dnsurv) # выж. боты популяции используемые в родителях
@@ -578,7 +578,7 @@ def selection(
                     # задаем первого бота популяции из сева
                     popul.append(posev_lst[m][2])
                     # Проходим по всей длине популяции от 1
-                    for i in range(1, nnew):
+                    for i in range(1, n):
                         # берем ген определяющий тип сети популяции
                         type_net = bot_pop[2]
                         choosing_net = Set_net(type_net, activ_lays, activ_out,
@@ -652,7 +652,7 @@ def selection(
 
                     popul = [] # Создаем пустую популяцию
                     # Проходим по всей длине популяции
-                    for i in range(nnew):
+                    for i in range(nn):
                         # создаем очередного случайнонного бота на основе blockov_list
                         bot = maker_blocks.buildblock_bot(blockov_list)
                         popul.append(bot)  # доб. бота в популяцию
