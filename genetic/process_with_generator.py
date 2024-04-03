@@ -652,7 +652,7 @@ def selection(
 
                     popul = [] # Создаем пустую популяцию
                     # Проходим по всей длине популяции
-                    for i in range(nn):
+                    for i in range(n):
                         # создаем очередного случайнонного бота на основе blockov_list
                         bot = maker_blocks.buildblock_bot(blockov_list)
                         popul.append(bot)  # доб. бота в популяцию
