@@ -32,8 +32,8 @@ def selection(
         verbouse: int,
         epohs: int,
         test_eph: int,
-        n: float,  # = 5 # количество ботов популяции
-        p: float, #  = 6  # количество популяций
+        n: int,  # = 5 # количество ботов популяции
+        p: int, #  = 6  # количество популяций
         dn: float, #= 0.3 # доля выживших ботов
         dp: float, # = 0.3 # доля выживших популяций
         dneff: float, # = 0.1 # доля выживших ботов по эффективности
@@ -263,7 +263,8 @@ def selection(
                             avl_mdl+=1
 
                         # Вычисляем точность текущего бота
-                        try:
+                        #try:
+                        if testing:
                             if testing:
                                 # оптимизатор
                                 optimizer = tf.keras.optimizers.Adam(learning_rate=1e-3)
@@ -272,7 +273,7 @@ def selection(
                                 # оценка по времени и смешанной точности нашей модели
                                 result = evaluate_model(
                                                         # парамметр от декоратора
-                                                        timeout =  TIMELIMIT_2,  # время в сек отводимое на оценку
+                                                        #timeout =  TIMELIMIT_2,  # время в сек отводимое на оценку
                                                         # собственные парамметры функции
                                                         model = gen_model,           # тестируемая модель
                                                         y_scaler = y_scaler, #Y_SCAILER,        # обученный скейлер для y
@@ -287,6 +288,7 @@ def selection(
                                                         )
 
                                 # выводим результат оценки
+                                print("result ", result)
                                 # если превысили время, то gen_model - просто сообщение
                                 if len(result) > 2:
                                     print(result)
@@ -311,7 +313,8 @@ def selection(
                                 f = 600
                                 tlrn = 600
 
-                        except Exception:
+                        #except Exception:
+                        else:        
                         # если не создалась то пишем плохую точность
                             print(discription + ' - не подошла под задачу')
                             ntk_mdl+=1
@@ -319,11 +322,11 @@ def selection(
                             tlrn = 800
 
                     except Exception:
-                            # если не создалась то пишем плохую точность
-                            print(discription + ' - не создалась')
-                            non_mdl+=1
-                            f = 1000
-                            tlrn = 1000
+                        # если не создалась то пишем плохую точность
+                        print(discription + ' - не создалась')
+                        non_mdl+=1
+                        f = 1000
+                        tlrn = 1000
                     if f in (600, 800, 1000): print('Модель отбракована')
                     elif f == 300: print('Модель долго учится')
                     else:

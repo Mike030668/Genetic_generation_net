@@ -1,4 +1,4 @@
-from stopit import threading_timeoutable as timeoutable
+#from stopit import threading_timeoutable as timeoutable
 from block_net.constant import  MESSAGE_2
 from block_net.callbacks import  TimeHistory, GarbageCollectorCallback
 from block_net.estimate.utils import get_scalepred, auto_corr
@@ -7,7 +7,7 @@ import numpy as np # библиотека нампи
 import gc                        # очиска памяти
 
 # Функция на оценки с добавленным колбеком времени
-@timeoutable(default = MESSAGE_2) # Декоратор для контроля времени
+#@timeoutable(default = MESSAGE_2) # Декоратор для контроля времени
 def evaluate_model(model,
                    y_scaler,
                    make_log: bool,
