@@ -38,8 +38,8 @@ def selection(
         verbouse: int,
         epohs: int,
         test_eph: int,
-        optimizer:object,
-        loss:object,
+        #optimizer:object,
+        #loss:object,
         n: int,                   # = 5 # количество ботов популяции
         p: int,                   #  = 6  # количество популяций
         dn: float,                # = 0.3 # доля выживших ботов
@@ -285,9 +285,9 @@ def selection(
                     #if testing:
                         if testing:
                             # оптимизатор
-                            #optimizer = tf.keras.optimizers.Adam(learning_rate=1e-3)
+                            optimizer = tf.keras.optimizers.Adam(learning_rate=1e-3)
                             # функция потерь
-                            #loss = tf.keras.losses.MSE
+                            loss = tf.keras.losses.MSE
                             # оценка по времени и смешанной точности нашей модели
                             result = evaluate_model(
                                                     # парамметр от декоратора
