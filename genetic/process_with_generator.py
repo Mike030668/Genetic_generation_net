@@ -237,101 +237,101 @@ def selection(
                     discription = f'{style_net[bot_pop[2]]}_{i}'
                     ###########################################
 
-                #####################################################################
-                #               ОЦЕНКА МОДЕЛИ ОТ БОТА ПОПУЛЯЦИИ                     #
-                #####################################################################
-                try:
-                    # пробуем создать модель
-                    gen_model = regress_model(
-                                                bot_pop,      # бот_популяции сетей
-                                                bot,          # бот парам-в слоев сети
-                                                blockov_list, # список имен слоев сети
-                                                maker_blocks, # класс построения блоков
-                                                # парамметр декоратора
-                                                timeout = TIMELIMIT_1,
-                                                # время в сек отводимое на создание модели
-                                                )
-                    # если превысили время, то gen_model - просто сообщение
-                    if type(gen_model) == str:
-                        print(gen_model)
-                        testing = False
-                    else: # значит модель создалась
-                        train_param = np.sum([tf.keras.backend.count_params(w) \
-                                                for w in gen_model.trainable_weights])
-                        print(discription + f' c {train_param} обучаемыми параметрами - создалась')
-                        testing = True
-                        avl_mdl+=1
-
-                    # Вычисляем точность текущего бота
+                    #####################################################################
+                    #               ОЦЕНКА МОДЕЛИ ОТ БОТА ПОПУЛЯЦИИ                     #
+                    #####################################################################
                     try:
-                        if testing:
-                            # оптимизатор
-                            optimizer = tf.keras.optimizers.Adam(learning_rate=1e-3)
-                            # функция потерь
-                            loss = tf.keras.losses.MSE
-                            # оценка по времени и смешанной точности нашей модели
-                            result = evaluate_model(
-                                                    # парамметр от декоратора
-                                                    timeout =  TIMELIMIT_2,  # время в сек отводимое на оценку
-                                                    # собственные парамметры функции
-                                                    model = gen_model,           # тестируемая модель
-                                                    y_scaler = y_scaler, #Y_SCAILER,        # обученный скейлер для y
-                                                    train_gen = train_datagen,   # генератор данных для обучения
-                                                    val_gen = val_datagen,       # генератор данных для проверки
-                                                    ep = test_eph,               # эпох обучения
-                                                    verb = verbouse,             # отображать ли обучение
-                                                    optimizer = optimizer,       # оптимизатор
-                                                    loss = loss,                 # функция потерь
-                                                    channels = np.arange(predit_lag),  #PREDICT_LAG),# Отображение сводки модели
-                                                    predict_lag = predit_lag #    PREDICT_LAG    # На сколько шагов предсказание
+                        # пробуем создать модель
+                        gen_model = regress_model(
+                                                    bot_pop,      # бот_популяции сетей
+                                                    bot,          # бот парам-в слоев сети
+                                                    blockov_list, # список имен слоев сети
+                                                    maker_blocks, # класс построения блоков
+                                                    # парамметр декоратора
+                                                    timeout = TIMELIMIT_1,
+                                                    # время в сек отводимое на создание модели
                                                     )
+                        # если превысили время, то gen_model - просто сообщение
+                        if type(gen_model) == str:
+                            print(gen_model)
+                            testing = False
+                        else: # значит модель создалась
+                            train_param = np.sum([tf.keras.backend.count_params(w) \
+                                                    for w in gen_model.trainable_weights])
+                            print(discription + f' c {train_param} обучаемыми параметрами - создалась')
+                            testing = True
+                            avl_mdl+=1
 
-                            # выводим результат оценки
-                            # если превысили время, то gen_model - просто сообщение
-                            if len(result) > 2:
-                                print(result)
+                        # Вычисляем точность текущего бота
+                        try:
+                            if testing:
+                                # оптимизатор
+                                optimizer = tf.keras.optimizers.Adam(learning_rate=1e-3)
+                                # функция потерь
+                                loss = tf.keras.losses.MSE
+                                # оценка по времени и смешанной точности нашей модели
+                                result = evaluate_model(
+                                                        # парамметр от декоратора
+                                                        timeout =  TIMELIMIT_2,  # время в сек отводимое на оценку
+                                                        # собственные парамметры функции
+                                                        model = gen_model,           # тестируемая модель
+                                                        y_scaler = y_scaler, #Y_SCAILER,        # обученный скейлер для y
+                                                        train_gen = train_datagen,   # генератор данных для обучения
+                                                        val_gen = val_datagen,       # генератор данных для проверки
+                                                        ep = test_eph,               # эпох обучения
+                                                        verb = verbouse,             # отображать ли обучение
+                                                        optimizer = optimizer,       # оптимизатор
+                                                        loss = loss,                 # функция потерь
+                                                        channels = np.arange(predit_lag),  #PREDICT_LAG),# Отображение сводки модели
+                                                        predict_lag = predit_lag #    PREDICT_LAG    # На сколько шагов предсказание
+                                                        )
+
+                                # выводим результат оценки
+                                # если превысили время, то gen_model - просто сообщение
+                                if len(result) > 2:
+                                    print(result)
+                                    ntk_mdl+=1
+                                    f = 300
+                                    tlrn = 300
+
+                                else: # значит модель протестировалась
+                                    f = result[0]
+                                    tlrn = result[1]
+                                    print(discription + ' - подошла под задачу')
+                                    gd_mdl+=1
+
+                                # удаляем модель
+                                del(gen_model)
+                                # чистим память
+                                gc.collect()
+
+                            else:
+                                print(discription + ' - слишком долго создавалась')
                                 ntk_mdl+=1
-                                f = 300
-                                tlrn = 300
+                                f = 600
+                                tlrn = 600
 
-                            else: # значит модель протестировалась
-                                f = result[0]
-                                tlrn = result[1]
-                                print(discription + ' - подошла под задачу')
-                                gd_mdl+=1
-
-                            # удаляем модель
-                            del(gen_model)
-                            # чистим память
-                            gc.collect()
-
-                        else:
-                            print(discription + ' - слишком долго создавалась')
+                        except Exception:
+                        # если не создалась то пишем плохую точность
+                            print(discription + ' - не подошла под задачу')
                             ntk_mdl+=1
-                            f = 600
-                            tlrn = 600
+                            f = 800
+                            tlrn = 800
 
                     except Exception:
-                    # если не создалась то пишем плохую точность
-                        print(discription + ' - не подошла под задачу')
-                        ntk_mdl+=1
-                        f = 800
-                        tlrn = 800
-
-                except Exception:
-                        # если не создалась то пишем плохую точность
-                        print(discription + ' - не создалась')
-                        non_mdl+=1
-                        f = 1000
-                        tlrn = 1000
-                if f in (600, 800, 1000): print('Модель отбракована')
-                elif f == 300: print('Модель долго учится')
-                else:
-                    print(f'Оценка модели {round(f, 5)}, тестовое обучение на {test_eph} эпохах составило {round(tlrn, 2)}сек. ')
-                print()
-                val.append(f)       # Добавляем полученное значение в список val
-                eff.append(tlrn*f) # сохраняем время эффективность обучения модели
-                #####################################################################
+                            # если не создалась то пишем плохую точность
+                            print(discription + ' - не создалась')
+                            non_mdl+=1
+                            f = 1000
+                            tlrn = 1000
+                    if f in (600, 800, 1000): print('Модель отбракована')
+                    elif f == 300: print('Модель долго учится')
+                    else:
+                        print(f'Оценка модели {round(f, 5)}, тестовое обучение на {test_eph} эпохах составило {round(tlrn, 2)}сек. ')
+                    print()
+                    val.append(f)       # Добавляем полученное значение в список val
+                    eff.append(tlrn*f) # сохраняем время эффективность обучения модели
+                    #####################################################################
 
                 ########################################################################
                 # базовый список точновстей мегапопуляции
