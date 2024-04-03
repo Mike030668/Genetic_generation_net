@@ -64,14 +64,14 @@ def show_process(svalp_lst:list, seffp_lst:list, ephtime_lst:list):
     print()
 
 
-def get_var_name(variable):
+def get_var_name(variable, globals_dict):
     '''
     Функция получения имени переменной в виде строки
     на основе глобальной видимости
     пример https://www.programiz.com/python-programming/methods/built-in/globals
     variable - переменная
     '''
-    globals_dict = globals()
+    #globals_dict = globals()
     var_name = [var_name for var_name in globals_dict
                 if globals_dict[var_name] is variable
                   ][0]

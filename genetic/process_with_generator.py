@@ -106,7 +106,10 @@ def selection(
                     
         """
     
-    
+        global globals_dict, mega_popul, botpop_lst, mega_info, svalp_lst, ephtime_lst
+        global newmega_popul, newbotpop_lst, newmega_info
+        globals_dict = globals()
+
 
         nsurv = max(2,round(dn* n))  # Кол-во выживших ботов мин 2 для родителей
         psurv = max(2,round(dp * p)) # Кол-во выживших популяций
@@ -399,7 +402,7 @@ def selection(
             ############################################################################
 
             ########## пересохраняем каждую эпоху данные ###############################
-            saver([mega_popul, botpop_lst, mega_info, svalp_lst, ephtime_lst], directory)
+            saver([mega_popul, botpop_lst, mega_info, svalp_lst, ephtime_lst], directory, globals_dict)
             # это можно взять в свернутый лист автопосев на случай сбоя колаба
             # то возобновить код с момента создания новых мега популяций и популяций
             ############################################################################
@@ -513,7 +516,7 @@ def selection(
                 print(f'Популяция {m}, ботов {len(newmega_popul[m])}')
 
                 ########## пересохраняем каждую эпоху данные ###########################
-                saver([newmega_popul, newbotpop_lst, newmega_info], directory)
+                saver([newmega_popul, newbotpop_lst, newmega_info], directory, globals_dict)
                 # это можно взять в свернутый лист автопосев на случай сбоя колаба
                 # то возобновить код с момента создания новых мега популяций и популяций
                 ########################################################################
@@ -647,7 +650,7 @@ def selection(
             ############################
 
             ########## пересохраняем каждую эпоху данные ###############################
-            saver([mega_popul, botpop_lst, mega_info, svalp_lst, ephtime_lst], directory)
+            saver([mega_popul, botpop_lst, mega_info, svalp_lst, ephtime_lst], directory, globals_dict)
             # это можно взять в свернутый лист автопосев на случай сбоя колаба
             # и возобновить код с момента создания новых мега популяций и популяций
             ############################################################################
