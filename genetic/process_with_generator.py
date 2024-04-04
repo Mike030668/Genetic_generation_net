@@ -299,7 +299,7 @@ def selection(
                                                     val_data = val_data,               # генератор данных для проверки
                                                     ep = test_eph,                     # эпох обучения
                                                     verb = verbouse,                   # отображать ли обучение
-                                                    optimizer = optimizer,             # оптимизатор
+                                                    optimizer = optimizer(learning_rate=1e-3), # оптимизатор
                                                     loss = loss,                       # функция потерь
                                                     channels = np.arange(predit_lag),  # P REDICT_LAG),# Отображение сводки модели
                                                     predict_lag = predit_lag ,         #    PREDICT_LAG    # На сколько шагов предсказание
