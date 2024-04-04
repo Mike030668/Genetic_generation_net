@@ -148,12 +148,12 @@ def selection(
 
         # для посева из определенных моделей нужно создвть лист сетей попримеру
         # или ввести 0 при запросе input()
-        if posev == []: posev = posev_net()
+        if not len(posev): posev = posev_net()
 
         for m in range(p):
         ############# ПОСЕВ ############################################################
             # сеем популяции из листа posev
-            if posev != [] and m < len(posev):
+            if len(posev) and m < len(posev):
                 bot_pop = posev[m][0]
                 blockov_list = posev[m][1]
                 popul = []                 # Создаем пустую популяцию
@@ -192,7 +192,7 @@ def selection(
             mega_info.append(blockov_list) # доб. информацию о блоках  в мегапопуляцию
             botpop_lst.append(bot_pop) # доб. мегабота популяции в лист ботов популяций
 
-        if posev != []: print(f'Посеено {len(posev)} сетей')
+        if len(posev): print(f'Посеено {len(posev)} сетей')
 
         # счетчики
         avl_mdl = 0 # счетчик созданных моделей
