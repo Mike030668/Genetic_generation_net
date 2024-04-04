@@ -22,13 +22,9 @@ def selection(
         frbest: int,
         inshape: tuple,
         predit_lag: int, 
-        make_log: bool,
-        x_val: list,
-        y_val: list,
         type_data : str,
         train_data: object,       # генератор данных для обучения
         val_data: object,
-        y_scaler: object,         # Y_SCAILER,        # обученный скейлер для y
         activ_lays: list,
         neiro_out: int,
         activ_out: str,
@@ -52,7 +48,11 @@ def selection(
         dpsurv: float,            # = 0.8 # доля от выживших ботов популяции используемыех в родителях
         dnsurv: float,            # = 0.8 # доля от выживших ботов мегапопуляции используемыех в родителях
         posev = [],
-        check_aotocorr = True
+        make_log = False,
+        x_val = [],
+        y_val = [],
+        y_scaler = None,          # Y_SCAILER,        # обученный скейлер для y
+        check_aotocorr = False
 ):
         """
          directory -  куда  пишет данные этот код
@@ -294,10 +294,6 @@ def selection(
                                                     timeout =  TIMELIMIT_2,            # время в сек отводимое на оценку
                                                     # собственные парамметры функции
                                                     model = gen_model,                 # тестируемая модель
-                                                    y_scaler = y_scaler,               # обученный скейлер для y
-                                                    make_log = make_log,
-                                                    x_val = x_val,
-                                                    y_val = y_val,
                                                     type_data = type_data,
                                                     train_data = train_data,           # генератор данных для обучения
                                                     val_data = val_data,               # генератор данных для проверки
@@ -307,6 +303,10 @@ def selection(
                                                     loss = loss,                       # функция потерь
                                                     channels = np.arange(predit_lag),  # P REDICT_LAG),# Отображение сводки модели
                                                     predict_lag = predit_lag ,         #    PREDICT_LAG    # На сколько шагов предсказание
+                                                    y_scaler = y_scaler,               # обученный скейлер для y
+                                                    make_log = make_log,
+                                                    x_val = x_val,
+                                                    y_val = y_val,
                                                     check_aotocorr = check_aotocorr
                                                     )
 

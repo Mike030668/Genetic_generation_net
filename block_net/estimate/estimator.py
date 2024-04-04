@@ -8,11 +8,7 @@ import gc                        # очиска памяти
 
 # Функция на оценки с добавленным колбеком времени
 @timeoutable(default = MESSAGE_2) # Декоратор для контроля времени
-def evaluate_model(model,
-                   y_scaler,
-                   make_log: bool,
-                   x_val: list,
-                   y_val: list,
+def evaluate_model(model,                  
                    type_data : str,
                    train_data,
                    val_data,
@@ -22,7 +18,11 @@ def evaluate_model(model,
                    loss,
                    channels,
                    predict_lag:int,
-                   check_aotocorr = True
+                   y_scaler = None,
+                   make_log = False,
+                   x_val = [],
+                   y_val = [],
+                   check_aotocorr = False
                    ):
       '''
       Функция оценки модели на точность и автокорреляцию, с обучение
@@ -54,23 +54,24 @@ def evaluate_model(model,
                                                       factor = 0.6,
                                                       patience = 1,
                                                       min_lr = 1e-9,
-                                                      verbose = 1)
+                                                      verbose = 1
+                                                      )
       if type_data == "generator":
-        # обучаем модель
-        history = model.fit(train_data,
-                            epochs=ep,
-                            verbose=verb,
-                            validation_data=val_data,
-                            callbacks=[time_callback, clear_ozu, reduce_lr])
+         # обучаем модель
+         history = model.fit(train_data,
+                              epochs=ep,
+                              verbose=verb,
+                              validation_data=val_data,
+                              callbacks=[time_callback, clear_ozu, reduce_lr])
         
       elif type_data == "numpy":
         # обучаем модель
-        history = model.fit(train_data[0],
-                            train_data[1],
-                            epochs=ep,
-                            verbose=verb,
-                            validation_data=val_data,
-                            callbacks=[time_callback, clear_ozu, reduce_lr])
+         history = model.fit(train_data[0],
+                              train_data[1],
+                              epochs=ep,
+                              verbose=verb,
+                              validation_data=val_data,
+                              callbacks=[time_callback, clear_ozu, reduce_lr])
         
       else:
          print("type_data can be 'generator' or 'numpy'")
@@ -80,26 +81,27 @@ def evaluate_model(model,
       # берем среднее время эпохи
       time_ep = np.mean(times_back)
 
-      # Прогнозируем данные текущей сетью
-      #(pred_val, y_val_true) = get_scalepred(model, XVAL, YVAL, y_scaler)
-      (pred_val, y_val_true) = get_scalepred(model, x_val, y_val, y_scaler, make_log)
-
-      # Возвращаем автокорреляцию
-      corr, own_corr = auto_corr(pred_lags = channels,
-                                 corr_steps = predict_lag,
-                                 y_pred = pred_val,
-                                 y_true = y_val_true,
-                                 show_graf = False,
-                                 return_data = True)
-      
-      # Считаем MAE автокорреляции и умножаем (прибавляем) ошибку обучения
+     # Считаем MAE автокорреляции и умножаем (прибавляем) ошибку обучения
       val = history.history["val_loss"][-1]
+
       if check_aotocorr:
+         # Прогнозируем данные текущей сетью
+         #(pred_val, y_val_true) = get_scalepred(model, XVAL, YVAL, y_scaler)
+         (pred_val, y_val_true) = get_scalepred(model, x_val, y_val, y_scaler, make_log)
+
+         # Возвращаем автокорреляцию
+         corr, own_corr = auto_corr(pred_lags = channels,
+                                    corr_steps = predict_lag,
+                                    y_pred = pred_val,
+                                    y_true = y_val_true,
+                                    show_graf = False,
+                                    return_data = True)
+      
          val+= tf.keras.losses.MAE(corr, own_corr).numpy()
 
       # чистим память
       tf.keras.backend.clear_session()
-      del model
+      del model, optimizer, loss
       gc.collect()
       # Возвращаем точность и среднее время эпохи
       return val, time_ep
